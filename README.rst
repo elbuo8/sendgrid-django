@@ -14,7 +14,7 @@ Install the backend from PyPI:
 
 Add the following to your project’s **settings.py**:
 
-::
+.. code:: python
 
     EMAIL_BACKEND = "sgbackend.SendGridBackend"
     SENDGRID_USER = "Your SendGrid Username"
