@@ -1,2 +1,5 @@
+build
+dist
+sendgrid_django.egg-info
 .pyc
 venv
