@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='sendgrid-django',
-    version='0.0.1',
+    version='1.0.0',
     author='Yamil Asusta',
     author_email='yamil@sendgrid.com',
     url='https://github.com/elbuo8/sendgrid-django',
