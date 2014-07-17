@@ -68,13 +68,13 @@ class SendGridBackend(BaseEmailBackend):
                 mail.set_replyto(reply_to)
 
             if "Subs" in email.extra_headers:
-                mail.set_substitutions(email.extra_headers["Sub"])
+                mail.set_substitutions(email.extra_headers["Subs"])
 
             if "Sections" in email.extra_headers:
-                mail.set_sections(email.extra_headers["Section"])
+                mail.set_sections(email.extra_headers["Sections"])
 
             if "Categories" in email.extra_headers:
-                mail.set_categories(email.extra_headers["Category"])
+                mail.set_categories(email.extra_headers["Categories"])
 
             if "Unique-Args" in email.extra_headers:
                 mail.set_unique_args(email.extra_headers["Unique-Args"])
