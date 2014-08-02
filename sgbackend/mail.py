@@ -61,6 +61,9 @@ class SendGridBackend(BaseEmailBackend):
             for alt in email.alternatives:
                 if alt[1] == "text/html":
                     mail.set_html(alt[0])
+		if email.cc and not self.fail_silently:
+            raise Exception("CC list must be empty for SendGridHttpsBackEnd. CC not supported by the web API")
+
 
         if email.extra_headers:
             if "Reply-To" in email.extra_headers:
