@@ -65,7 +65,7 @@ class SendGridBackend(BaseEmailBackend):
 		if email.cc and not self.fail_silently:
             raise Exception("CC list must be empty for SendGridHttpsBackEnd. CC not supported by the web API")
 
-		for attachment in email.attachments:
+        for attachment in email.attachments:
             if isinstance(attachment, MIMEBase):
                 mail.add_attachment_stream(attachment.get_filename(), attachment.get_payload())
             elif isinstance(attachment, tuple):
