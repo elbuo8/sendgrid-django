@@ -2,6 +2,7 @@ from django.core.mail.backends.base import BaseEmailBackend
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
+from email.mime.base import MIMEBase
 import sendgrid
 
 try:
@@ -61,6 +62,14 @@ class SendGridBackend(BaseEmailBackend):
             for alt in email.alternatives:
                 if alt[1] == "text/html":
                     mail.set_html(alt[0])
+		if email.cc and not self.fail_silently:
+            raise Exception("CC list must be empty for SendGridHttpsBackEnd. CC not supported by the web API")
+
+		for attachment in email.attachments:
+            if isinstance(attachment, MIMEBase):
+                mail.add_attachment_stream(attachment.get_filename(), attachment.get_payload())
+            elif isinstance(attachment, tuple):
+                mail.add_attachment_stream(attachment[0],attachment[1])
 
         if email.extra_headers:
             if "Reply-To" in email.extra_headers:
