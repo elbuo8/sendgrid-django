@@ -10,19 +10,24 @@ try:
 except Exception as e:
     import email.utils as rfc822
 
+
 class SendGridBackend(BaseEmailBackend):
     '''
     SendGrid Web API Backend
     '''
     def __init__(self, fail_silently=False, **kwargs):
-        super(SendGridBackend, self).__init__(fail_silently=fail_silently, **kwargs)
+        super(SendGridBackend, self).__init__(
+            fail_silently=fail_silently, **kwargs)
         self.api_user = getattr(settings, "SENDGRID_USER", None)
-        self.api_key =  getattr(settings, "SENDGRID_PASSWORD", None)
+        self.api_key = getattr(settings, "SENDGRID_PASSWORD", None)
 
-        if self.api_user == None or self.api_key == None:
-            raise ImproperlyConfigured('''Either SENDGRID_USER or SENDGRID_PASSWORD
+        if self.api_user is None or self.api_key is None:
+            raise ImproperlyConfigured('''
+                Either SENDGRID_USER or SENDGRID_PASSWORD
                 was not declared in settings.py''')
-        self.sg = sendgrid.SendGridClient(self.api_user, self.api_key, raise_errors= not fail_silently)
+        self.sg = sendgrid.SendGridClient(
+            self.api_user, self.api_key,
+            raise_errors=not fail_silently)
 
     def open(self):
         pass
@@ -62,14 +67,14 @@ class SendGridBackend(BaseEmailBackend):
             for alt in email.alternatives:
                 if alt[1] == "text/html":
                     mail.set_html(alt[0])
-		if email.cc and not self.fail_silently:
-            raise Exception("CC list must be empty for SendGridHttpsBackEnd. CC not supported by the web API")
 
         for attachment in email.attachments:
             if isinstance(attachment, MIMEBase):
-                mail.add_attachment_stream(attachment.get_filename(), attachment.get_payload())
+                mail.add_attachment_stream(
+                    attachment.get_filename(),
+                    attachment.get_payload())
             elif isinstance(attachment, tuple):
-                mail.add_attachment_stream(attachment[0],attachment[1])
+                mail.add_attachment_stream(attachment[0], attachment[1])
 
         if email.extra_headers:
             if "Reply-To" in email.extra_headers:
