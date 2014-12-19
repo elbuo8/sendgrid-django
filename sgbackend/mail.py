@@ -97,6 +97,6 @@ class SendGridBackend(BaseEmailBackend):
                 mail.data['filters'] = email.extra_headers["Filters"]
 
             for attachment in email.attachments:
-                mail.add_attachment_stream(attachment.Name, attachment.Content)
+                mail.add_attachment_stream(attachment[0], attachment[1])
 
         return mail
