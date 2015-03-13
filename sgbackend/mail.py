@@ -59,6 +59,8 @@ class SendGridBackend(BaseEmailBackend):
     def _build_sg_mail(self, email):
         mail = sendgrid.Mail()
         mail.add_to(email.to)
+        mail.add_cc(email.cc)
+        mail.add_bcc(email.bcc)
         mail.set_text(email.body)
         mail.set_subject(email.subject)
         mail.set_from(email.from_email)
