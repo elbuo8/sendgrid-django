@@ -76,6 +76,9 @@ class SendGridBackend(BaseEmailBackend):
             for alt in email.alternatives:
                 if alt[1] == "text/html":
                     mail.set_html(alt[0])
+        elif email.content_subtype == "html":
+            mail.set_html(email.body)
+            mail.set_text("")
 
         for attachment in email.attachments:
             if isinstance(attachment, MIMEBase):
