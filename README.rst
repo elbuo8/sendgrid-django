@@ -1,7 +1,7 @@
 SendGrid-django
 ===============
 
-Simple django backend to send email using SendGrid’s Web API.
+Simple django backend to send email using SendGrid's Web API.
 
 Installation
 ------------
@@ -12,7 +12,7 @@ Install the backend from PyPI:
 
     pip install sendgrid-django
 
-Add the following to your project’s **settings.py**:
+Add the following to your project's **settings.py**:
 
 .. code:: python
 
