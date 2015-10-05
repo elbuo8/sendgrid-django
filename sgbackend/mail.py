@@ -103,7 +103,7 @@ class SendGridBackend(BaseEmailBackend):
                 mail.set_unique_args(email.extra_headers["Unique-Args"])
 
             if "Filters" in email.extra_headers:
-                mail.data['filters'] = email.extra_headers["Filters"]
+                mail.smtpapi.data['filters'] = email.extra_headers["Filters"]
 
             for attachment in email.attachments:
                 mail.add_attachment_stream(attachment[0], attachment[1])
