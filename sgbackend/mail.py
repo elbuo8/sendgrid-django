@@ -105,6 +105,9 @@ class SendGridBackend(BaseEmailBackend):
             if "Filters" in email.extra_headers:
                 mail.smtpapi.data['filters'] = email.extra_headers["Filters"]
 
+            if "Group" in email.extra_headers:
+                mail.data['asm_group_id'] = email.extra_headers["Group"]
+
             for attachment in email.attachments:
                 mail.add_attachment_stream(attachment[0], attachment[1])
 
