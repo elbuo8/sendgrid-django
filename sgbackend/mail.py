@@ -67,7 +67,7 @@ class SendGridBackend(BaseEmailBackend):
         mail = sendgrid.Mail()
         
         # use smtpapi if recipient list provided, otherwise use standard to field
-        if len(email.to) > 1:
+        if isinstance(email.to, list):
             mail.smtpapi.add_tos(email.to)
         else:
             mail.add_to(email.to)
