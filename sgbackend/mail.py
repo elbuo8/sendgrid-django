@@ -73,6 +73,16 @@ class SendGridBackend(BaseEmailBackend):
             mail.add_content(Content("text/plain", ' '))
             mail.add_content(Content("text/html", email.body))
 
+        if hasattr(email, 'sendgrid_categories'):
+            for c in email.sendgrid_categories:
+                mail.add_category(Category(c))
+
+        if hasattr(email, 'sendgrid_template'):
+            mail.set_template_id(email.sendgrid_template)
+            if hasattr(email, 'sendgrid_substitutions'):
+                for k, v in email.sendgrid_substitutions.iteritems():
+                    personalization.add_substitution(Substitution(k, v))
+
         for attachment in email.attachments:
             if isinstance(attachment, MIMEBase):
                 attach = Attachment()
