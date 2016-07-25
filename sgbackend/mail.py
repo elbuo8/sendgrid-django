@@ -65,7 +65,13 @@ class SendGridBackend(BaseEmailBackend):
 
     def _build_sg_mail(self, email):
         mail = sendgrid.Mail()
-        mail.add_to(email.to)
+        
+        # use smtpapi if recipient list provided, otherwise use standard to field
+        if isinstance(email.to, list):
+            mail.smtpapi.set_tos(email.to)
+        else:
+            mail.add_to(email.to)
+
         mail.add_cc(email.cc)
         mail.add_bcc(email.bcc)
         mail.set_text(email.body)
