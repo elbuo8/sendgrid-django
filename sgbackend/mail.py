@@ -80,7 +80,7 @@ class SendGridBackend(BaseEmailBackend):
         if hasattr(email, 'sendgrid_template'):
             mail.set_template_id(email.sendgrid_template)
             if hasattr(email, 'sendgrid_substitutions'):
-                for k, v in email.sendgrid_substitutions.iteritems():
+                for k, v in email.sendgrid_substitutions.items():
                     personalization.add_substitution(Substitution(k, v))
 
         for attachment in email.attachments:
