@@ -81,14 +81,14 @@ class SendGridBackend(BaseEmailBackend):
             mail.add_content(Content("text/plain", ' '))
             mail.add_content(Content("text/html", email.body))
 
-        if hasattr(email, 'sendgrid_categories'):
-            for c in email.sendgrid_categories:
+        if hasattr(email, 'categories'):
+            for c in email.categories:
                 mail.add_category(Category(c))
 
-        if hasattr(email, 'sendgrid_template'):
-            mail.set_template_id(email.sendgrid_template)
-            if hasattr(email, 'sendgrid_substitutions'):
-                for k, v in email.sendgrid_substitutions.items():
+        if hasattr(email, 'template_id'):
+            mail.set_template_id(email.template_id)
+            if hasattr(email, 'substitutions'):
+                for k, v in email.substitutions.items():
                     personalization.add_substitution(Substitution(k, v))
 
         for attachment in email.attachments:
