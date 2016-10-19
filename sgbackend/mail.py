@@ -1,23 +1,23 @@
-import urllib
-import logging
-
+import base64
 import sys
-from django.core.mail.backends.base import BaseEmailBackend
+import urllib
+from email.mime.base import MIMEBase
+
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMultiAlternatives
-from django.conf import settings
-from email.mime.base import MIMEBase
+from django.core.mail.backends.base import BaseEmailBackend
+
 import sendgrid
-import base64
-from sendgrid.helpers.mail import *
-
-try:
-    import rfc822
-except Exception as e:
-    import email.utils as rfc822
-
-
-logger = logging.getLogger(__name__)
+from sendgrid.helpers.mail import (
+    Attachment,
+    Category,
+    Content,
+    Email,
+    Mail,
+    Personalization,
+    Substitution
+)
 
 
 class SendGridBackend(BaseEmailBackend):
@@ -56,7 +56,8 @@ class SendGridBackend(BaseEmailBackend):
                 self.sg.client.mail.send.post(request_body=mail)
                 count += 1
             except urllib.error.HTTPError as e:
-                logger.error(e.read())
+                if not self.fail_silently:
+                    raise
         return count
 
     def _build_sg_mail(self, email):
