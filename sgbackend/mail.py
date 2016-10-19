@@ -1,3 +1,6 @@
+import urllib
+import logging
+
 from django.core.mail.backends.base import BaseEmailBackend
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMultiAlternatives
@@ -11,6 +14,9 @@ try:
     import rfc822
 except Exception as e:
     import email.utils as rfc822
+
+
+logger = logging.getLogger(__name__)
 
 
 class SendGridBackend(BaseEmailBackend):
@@ -45,9 +51,11 @@ class SendGridBackend(BaseEmailBackend):
         count = 0
         for email in emails:
             mail = self._build_sg_mail(email)
-            response = self.sg.client.mail.send.post(request_body=mail)
-            count += 1
-
+            try:
+                self.sg.client.mail.send.post(request_body=mail)
+                count += 1
+            except urllib.error.HTTPError as e:
+                logger.error(e.read())
         return count
 
     def _build_sg_mail(self, email):
