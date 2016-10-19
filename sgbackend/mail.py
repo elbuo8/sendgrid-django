@@ -15,7 +15,7 @@ try:
     import rfc822
 except Exception as e:
     import email.utils as rfc822
-import six
+
 
 logger = logging.getLogger(__name__)
 
