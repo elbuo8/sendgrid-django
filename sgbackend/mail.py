@@ -1,6 +1,7 @@
 import urllib
 import logging
 
+import sys
 from django.core.mail.backends.base import BaseEmailBackend
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMultiAlternatives
@@ -14,7 +15,7 @@ try:
     import rfc822
 except Exception as e:
     import email.utils as rfc822
-
+import six
 
 logger = logging.getLogger(__name__)
 
@@ -100,7 +101,11 @@ class SendGridBackend(BaseEmailBackend):
             elif isinstance(attachment, tuple):
                 attach = Attachment()
                 attach.set_filename(attachment[0])
-                attach.set_content(base64.b64encode(attachment[1]))
+                base64_attachment = base64.b64encode(attachment[1])
+                if sys.version_info >= (3,):
+                    attach.set_content(str(base64_attachment, 'utf-8'))
+                else:
+                    attach.set_content(base64_attachment)
                 attach.set_type(attachment[2])
                 mail.add_attachment(attach)
 
