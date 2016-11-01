@@ -93,6 +93,9 @@ class SendGridBackend(BaseEmailBackend):
                 for k, v in email.substitutions.items():
                     personalization.add_substitution(Substitution(k, v))
 
+        for k, v in email.extra_headers.items():
+            mail.add_header({k: v})
+
         for attachment in email.attachments:
             if isinstance(attachment, MIMEBase):
                 attach = Attachment()
