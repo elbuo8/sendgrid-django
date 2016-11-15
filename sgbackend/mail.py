@@ -1,7 +1,11 @@
 import base64
 import sys
-import urllib
 from email.mime.base import MIMEBase
+
+try:
+    from urllib.error import HTTPError
+except ImportError:
+    from urllib2 import HTTPError
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -55,7 +59,7 @@ class SendGridBackend(BaseEmailBackend):
             try:
                 self.sg.client.mail.send.post(request_body=mail)
                 count += 1
-            except urllib.error.HTTPError as e:
+            except HTTPError as e:
                 if not self.fail_silently:
                     raise
         return count
