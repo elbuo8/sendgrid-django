@@ -19,14 +19,6 @@ Add the following to your project's **settings.py**:
     EMAIL_BACKEND = "sgbackend.SendGridBackend"
     SENDGRID_API_KEY = "Your SendGrid API Key"
 
-Or, SendGrid username and password can be used instead of an API key:
-
-.. code:: python
-
-    EMAIL_BACKEND = "sgbackend.SendGridBackend"
-    SENDGRID_USER = "Your SendGrid Username"
-    SENDGRID_PASSWORD = "Your SendGrid Password"
-
 **Done!**
 
 Example
