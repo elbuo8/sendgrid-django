@@ -56,8 +56,10 @@ Example
     mail.substitutions = {'%username%': 'elbuo8'}
 
     # Attach file
-    file = open('somefilename.pdf', 'rb').read()
-    mail.attachments = [('somefilename.pdf', file, 'application/pdf')]
+    with open('somefilename.pdf', 'rb') as file:
+        mail.attachments = [
+            ('somefilename.pdf', file.read(), 'application/pdf')
+        ]
 
     mail.attach_alternative(
         "<p>This is a simple HTML email body</p>", "text/html"
