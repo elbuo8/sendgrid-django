@@ -49,11 +49,26 @@ Example
       to=["yamil@sendgrid.com"],
       headers={"Reply-To": "support@sendgrid.com"}
     )
-    mail.attach_alternative("<p>This is a simple HTML email body</p>", "text/html")
+    # Add template
+    mail.template_id = 'YOUR TEMPLATE ID FROM SENDGRID ADMIN'
+
+    # Replace substitutions in sendgrid template
+    mail.substitutions = {'%username%': 'elbuo8'}
+
+    # Attach file
+    file = open('somefilename.pdf', 'rb').read()
+    mail.attachments = [('somefilename.pdf', file, 'application/pdf')]
+
+    mail.attach_alternative(
+        "<p>This is a simple HTML email body</p>", "text/html"
+    )
 
     mail.send()
 
+
+License
+-------
 MIT
----
+
 
 Enjoy :)
