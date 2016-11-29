@@ -76,7 +76,7 @@ class SendGridBackend(BaseEmailBackend):
         # sendgrid/helpers/mail/mail.py:164
         if not from_name:
             from_name = None
-        mail.set_from(Mail(from_email, from_name))
+        mail.set_from(Email(from_email, from_name))
         mail.set_subject(email.subject)
 
         personalization = Personalization()
