@@ -69,25 +69,6 @@ class SendGridBackend(BaseEmailBackend):
                     raise
         return count
 
-    @staticmethod
-    def convert_from_email(email):
-        """
-        More info https://tools.ietf.org/html/rfc2822#section-3.4
-        Split From name <email> into
-        Sendgrid Email(from_email, from_name)
-        """
-        from_email = (email.from_email or
-                      getattr(settings, 'DEFAULT_FROM_EMAIL'))
-        if '<' in email.from_email:
-            split_from_email = from_email.split('<')
-            return Email(
-                split_from_email[0].strip(), split_from_email[1][:-1]
-            )
-        else:
-            if hasattr(email, 'from_name'):
-                return Email(from_email, email.from_name)
-            return Email(from_email)
-
     def _build_sg_mail(self, email):
         mail = Mail()
         from_name, from_email = rfc822.parseaddr(email.from_email)
