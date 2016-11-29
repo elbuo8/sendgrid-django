@@ -9,6 +9,11 @@ try:
 except ImportError:
     from urllib2 import HTTPError
 
+try:
+    import rfc822
+except ImportError:
+    import email.utils as rfc822
+
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMultiAlternatives
@@ -70,7 +75,12 @@ class SendGridBackend(BaseEmailBackend):
 
     def _build_sg_mail(self, email):
         mail = Mail()
-        mail.set_from(Email(email.from_email))
+        from_name, from_email = rfc822.parseaddr(email.from_email)
+        # Python sendgrid client should improve
+        # sendgrid/helpers/mail/mail.py:164
+        if not from_name:
+            from_name = None
+        mail.set_from(Email(from_email, from_name))
         mail.set_subject(email.subject)
 
         personalization = Personalization()
