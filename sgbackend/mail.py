@@ -47,7 +47,6 @@ class SendGridBackend(BaseEmailBackend):
         self.sg = sendgrid.SendGridAPIClient(apikey=self.api_key)
         self.version = 'sendgrid/{0};django'.format(__version__)
         self.sg.client.request_headers['User-agent'] = self.version
-        return self
 
     def open(self):
         pass
