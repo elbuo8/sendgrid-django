@@ -3,9 +3,9 @@ import sys
 from email.mime.base import MIMEBase
 
 try:
-    from urllib.error import HTTPError
-except ImportError:
-    from urllib2 import HTTPError
+    from urllib.error import HTTPError  # pragma: no cover
+except ImportError: # pragma: no cover
+    from urllib2 import HTTPError  # pragma: no cover
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
