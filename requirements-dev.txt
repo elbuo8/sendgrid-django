@@ -1,2 +1,4 @@
 django
 coverage
+pytest
+pytest-cov
