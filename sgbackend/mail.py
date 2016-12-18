@@ -1,3 +1,5 @@
+from .version import __version__
+
 import base64
 import sys
 from email.mime.base import MIMEBase
@@ -38,18 +40,13 @@ class SendGridBackend(BaseEmailBackend):
             fail_silently=fail_silently, **kwargs)
         self.api_key = getattr(settings, "SENDGRID_API_KEY", None)
 
-        if self.api_key:
-            self.sg = sendgrid.SendGridAPIClient(
-                apikey=self.api_key)
-        else:
+        if not self.api_key:
             raise ImproperlyConfigured('''
                 SENDGRID_API_KEY must be declared in settings.py''')
 
-    def open(self):
-        pass
-
-    def close(self):
-        pass
+        self.sg = sendgrid.SendGridAPIClient(apikey=self.api_key)
+        self.version = 'sendgrid/{0};django'.format(__version__)
+        self.sg.client.request_headers['User-agent'] = self.version
 
     def send_messages(self, emails):
         '''
