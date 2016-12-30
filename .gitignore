@@ -4,9 +4,6 @@ sendgrid_django.egg-info
 .pyc
 .eggs
 venv
-prod_data/*
-media/
-db.sqlite3
 .idea
 .DS_Store
 .python-version
