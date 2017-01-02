@@ -1,11 +1,20 @@
 language: python
 sudo: false
-matrix:
-  include:
-  - python: "3.5"
-  - python: "2.7"
+env:
+  - DJANGO_VERSION=1.10.4
+  - DJANGO_VERSION=1.9.12
+  - DJANGO_VERSION=1.8.17
+python:
+  - "2.7"
+  - "3.2"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+  - "nightly" # currently points to 3.7-dev
 install:
   - pip install -e .
+  - pip install -q Django==$DJANGO_VERSION
   - pip install -rrequirements-dev.txt
 script:
   - make test
