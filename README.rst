@@ -1,6 +1,10 @@
 SendGrid-django
 ===============
 
+.. image:: https://travis-ci.org/elbuo8/sendgrid-django.svg?branch=master
+:target: https://travis-ci.org/elbuo8/sendgrid-django
+:alt: Travis CI
+
 Simple django backend to send email using SendGrid's Web API.
 
 Installation
