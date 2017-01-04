@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
 from django.test import SimpleTestCase as TestCase
 
 from sgbackend import SendGridBackend
@@ -18,13 +19,69 @@ class SendGridBackendTests(TestCase):
             SendGridBackend().send_messages(emails=[])
 
     def test_build_empty_sg_mail(self):
-        test_email = EmailMessage()
+        msg = EmailMessage()
         with self.settings(SENDGRID_API_KEY='test_key'):
-            mail = SendGridBackend()._build_sg_mail(test_email)
+            mail = SendGridBackend()._build_sg_mail(msg)
             self.assertEqual(
                 mail,
                 {'from': {'email': 'webmaster@localhost'},
                  'subject': '',
                  'content': [{'type': 'text/plain', 'value': ''}],
                  'personalizations': [{'subject': ''}]}
+            )
+
+    def test_build_w_to_sg_email(self):
+        msg = EmailMessage(to=('andrii.soldatenko@test.com',))
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            mail = SendGridBackend()._build_sg_mail(msg)
+            self.assertEqual(
+                mail,
+                {'content': [{'value': '', 'type': 'text/plain'}],
+                 'personalizations': [
+                     {'to': [{'email': 'andrii.soldatenko@test.com'}],
+                      'subject': ''}],
+                 'from': {'email': 'webmaster@localhost'}, 'subject': ''}
+            )
+
+    def test_build_w_cc_sg_email(self):
+        msg = EmailMessage(cc=('andrii.soldatenko@test.com',))
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            mail = SendGridBackend()._build_sg_mail(msg)
+            self.assertEqual(
+                mail,
+                {'content': [{'value': '', 'type': 'text/plain'}],
+                 'personalizations': [
+                     {'cc': [{'email': 'andrii.soldatenko@test.com'}],
+                      'subject': ''}],
+                 'from': {'email': 'webmaster@localhost'}, 'subject': ''}
+            )
+
+    def test_build_w_bcc_sg_email(self):
+        msg = EmailMessage(bcc=('andrii.soldatenko@test.com',))
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            mail = SendGridBackend()._build_sg_mail(msg)
+            self.assertEqual(
+                mail,
+                {'content': [{'value': '', 'type': 'text/plain'}],
+                 'personalizations': [
+                     {'bcc': [{'email': 'andrii.soldatenko@test.com'}],
+                      'subject': ''}],
+                 'from': {'email': 'webmaster@localhost'}, 'subject': ''}
+            )
+
+    def test_build_empty_multi_alternatives_sg_email(self):
+        html_content = '<p>This is an <strong>important</strong> message.</p>'
+        msg = EmailMultiAlternatives()
+        msg.attach_alternative(html_content, "text/html")
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            mail = SendGridBackend()._build_sg_mail(msg)
+            self.assertEqual(
+                mail,
+                {'content': [{'type': 'text/plain', 'value': ''},
+                             {'type': 'text/html',
+                              'value': '<p>This is an <strong>important</strong> '
+                              'message.</p>'}],
+                 'from': {'email': 'webmaster@localhost'},
+                 'personalizations': [{'subject': ''}],
+                 'subject': ''}
             )
