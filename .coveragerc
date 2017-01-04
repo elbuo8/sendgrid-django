@@ -2,6 +2,3 @@
 branch = True
 source = sgbackend, tests
 omit = site-packages
-
-[html]
-directory = coverage
