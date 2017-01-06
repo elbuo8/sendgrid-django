@@ -5,9 +5,9 @@ import sys
 from email.mime.base import MIMEBase
 
 try:
-    from urllib.error import HTTPError
-except ImportError:
-    from urllib2 import HTTPError
+    from urllib.error import HTTPError  # pragma: no cover
+except ImportError: # pragma: no cover
+    from urllib2 import HTTPError  # pragma: no cover
 
 try:
     import rfc822
@@ -47,12 +47,6 @@ class SendGridBackend(BaseEmailBackend):
         self.sg = sendgrid.SendGridAPIClient(apikey=self.api_key)
         self.version = 'sendgrid/{0};django'.format(__version__)
         self.sg.client.request_headers['User-agent'] = self.version
-
-    def open(self):
-        pass
-
-    def close(self):
-        pass
 
     def send_messages(self, emails):
         '''
