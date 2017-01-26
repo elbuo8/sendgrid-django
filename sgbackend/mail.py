@@ -78,9 +78,9 @@ class SendGridBackend(BaseEmailBackend):
         
         if email.reply_to:
             if isinstance(email.reply_to, str):
-                mail.set_reply_to(email.reply_to)
+                mail.set_reply_to(Email(email.reply_to))
             else:
-                mail.set_reply_to(email.reply_to[0])
+                mail.set_reply_to(Email(email.reply_to[0]))
                 
         personalization = Personalization()
         for e in email.to:
