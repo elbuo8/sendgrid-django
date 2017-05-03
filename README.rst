@@ -64,6 +64,15 @@ Example
         "<p>This is a simple HTML email body</p>", "text/html"
     )
 
+    # Custom args
+    # Dictionary values must be a string
+
+    msg.custom_args = [
+        {'invoice_code': '{}'.format(invoice.pk)},
+        {'content_type': '{}'.format(ct.pk)},
+        {'code': '{}'.format(invoice.code)},
+    ]
+
     mail.send()
 
 
