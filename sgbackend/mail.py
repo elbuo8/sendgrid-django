@@ -74,8 +74,10 @@ class SendGridBackend(BaseEmailBackend):
         # sendgrid/helpers/mail/mail.py:164
         if not from_name:
             from_name = None
-        mail.set_from(Email(from_email, from_name))
-        mail.set_subject(email.subject)
+
+        mail.from_email = Email(from_email, from_name)
+
+        mail.subject = email.subject
 
         personalization = Personalization()
         for e in email.to:
@@ -84,7 +86,7 @@ class SendGridBackend(BaseEmailBackend):
             personalization.add_cc(Email(e))
         for e in email.bcc:
             personalization.add_bcc(Email(e))
-        personalization.set_subject(email.subject)
+        personalization.subject = email.subject
         mail.add_content(Content("text/plain", email.body))
         if isinstance(email, EmailMultiAlternatives):
             for alt in email.alternatives:
@@ -104,9 +106,11 @@ class SendGridBackend(BaseEmailBackend):
             if hasattr(email, 'substitutions'):
                 for k, v in email.substitutions.items():
                     personalization.add_substitution(Substitution(k, v))
+
         if hasattr(email, 'custom_args'):
-            for k, v in email.custom_args.items():
-                mail.add_custom_arg(CustomArg(k, v))
+            for item in email.custom_args:
+                for k, v in item.items():
+                    mail.add_custom_arg(CustomArg(k, v))
 
         for k, v in email.extra_headers.items():
             mail.add_header({k: v})
@@ -114,18 +118,18 @@ class SendGridBackend(BaseEmailBackend):
         for attachment in email.attachments:
             if isinstance(attachment, MIMEBase):
                 attach = Attachment()
-                attach.set_filename(attachment.get_filename())
-                attach.set_content(base64.b64encode(attachment.get_payload()))
+                attach.filename = attachment.get_filename()
+                attach.content = base64.b64encode(attachment.get_payload())
                 mail.add_attachment(attach)
             elif isinstance(attachment, tuple):
                 attach = Attachment()
-                attach.set_filename(attachment[0])
+                attach.filename = attachment[0]
                 base64_attachment = base64.b64encode(attachment[1])
                 if sys.version_info >= (3,):
-                    attach.set_content(str(base64_attachment, 'utf-8'))
+                    attach.content = str(base64_attachment, 'utf-8')
                 else:
-                    attach.set_content(base64_attachment)
-                attach.set_type(attachment[2])
+                    attach.content = base64_attachment
+                attach.type = attachment[2]
                 mail.add_attachment(attach)
 
         mail.add_personalization(personalization)
