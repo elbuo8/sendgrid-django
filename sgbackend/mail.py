@@ -27,7 +27,8 @@ from sendgrid.helpers.mail import (
     Email,
     Mail,
     Personalization,
-    Substitution
+    Substitution,
+    CustomArg
 )
 
 
@@ -103,6 +104,9 @@ class SendGridBackend(BaseEmailBackend):
             if hasattr(email, 'substitutions'):
                 for k, v in email.substitutions.items():
                     personalization.add_substitution(Substitution(k, v))
+        if hasattr(email, 'custom_args'):
+            for k, v in email.custom_args.items():
+                mail.add_custom_arg(CustomArg(k, v))
 
         for k, v in email.extra_headers.items():
             mail.add_header({k: v})
