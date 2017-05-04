@@ -1,3 +1,4 @@
+import pytest
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage
@@ -94,12 +95,13 @@ class SendGridBackendTests(TestCase):
             mail = SendGridBackend()._build_sg_mail(msg)
             self.assertEqual(
                 mail,
-                {'categories': ['name'],
-                 'content': [{'type': 'text/plain', 'value': ''}],
-                 'from': {'email': 'webmaster@localhost'},
-                 'personalizations': [{'subject': ''}],
-                 'subject': ''
-                 }
+                {
+                    'categories': ['name'],
+                    'content': [{'type': 'text/plain', 'value': ''}],
+                    'from': {'email': 'webmaster@localhost'},
+                    'personalizations': [{'subject': ''}],
+                    'subject': ''
+                }
             )
 
     def test_build_sg_email_w_template_id(self):
@@ -109,12 +111,13 @@ class SendGridBackendTests(TestCase):
             mail = SendGridBackend()._build_sg_mail(msg)
             self.assertEqual(
                 mail,
-                {'template_id': 'template_id_123456',
-                 'content': [{'type': 'text/plain', 'value': ''}],
-                 'from': {'email': 'webmaster@localhost'},
-                 'personalizations': [{'subject': ''}],
-                 'subject': ''
-                 }
+                {
+                    'template_id': 'template_id_123456',
+                    'content': [{'type': 'text/plain', 'value': ''}],
+                    'from': {'email': 'webmaster@localhost'},
+                    'personalizations': [{'subject': ''}],
+                    'subject': ''
+                }
             )
 
     def test_build_sg_email_w_substitutions(self):
@@ -124,10 +127,12 @@ class SendGridBackendTests(TestCase):
             mail = SendGridBackend()._build_sg_mail(msg)
             self.assertEqual(
                 mail,
-                {'content': [{'type': 'text/plain', 'value': ''}],
-                 'from': {'email': 'webmaster@localhost'},
-                 'personalizations': [{'subject': ''}],
-                 'subject': ''}
+                {
+                    'content': [{'type': 'text/plain', 'value': ''}],
+                    'from': {'email': 'webmaster@localhost'},
+                    'personalizations': [{'subject': ''}],
+                    'subject': ''
+                }
             )
 
     def test_build_sg_email_w_extra_headers(self):
@@ -137,9 +142,29 @@ class SendGridBackendTests(TestCase):
             mail = SendGridBackend()._build_sg_mail(msg)
             self.assertEqual(
                 mail,
-                {'content': [{'type': 'text/plain', 'value': ''}],
-                 'from': {'email': 'webmaster@localhost'},
-                 'headers': {'EXTRA_HEADER': 'VALUE'},
-                 'personalizations': [{'subject': ''}],
-                 'subject': ''}
+                {
+                    'content': [{'type': 'text/plain', 'value': ''}],
+                    'from': {'email': 'webmaster@localhost'},
+                    'headers': {'EXTRA_HEADER': 'VALUE'},
+                    'personalizations': [{'subject': ''}],
+                    'subject': ''
+                }
+            )
+
+    def test_build_sg_email_w_custom_args(self):
+        msg = EmailMessage()
+        msg.custom_args = [
+            {'pk': '{}'.format('5')}
+        ]
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            mail = SendGridBackend()._build_sg_mail(msg)
+            self.assertEqual(
+                mail,
+                {
+                    'content': [{'type': 'text/plain', 'value': ''}],
+                    'custom_args': {'pk': '5'},
+                    'from': {'email': 'webmaster@localhost'},
+                    'personalizations': [{'subject': ''}],
+                    'subject': ''
+                }
             )
