@@ -1,5 +1,6 @@
 from .version import __version__
 
+
 import base64
 import sys
 from email.mime.base import MIMEBase
@@ -102,7 +103,7 @@ class SendGridBackend(BaseEmailBackend):
                 mail.add_category(Category(c))
 
         if hasattr(email, 'template_id'):
-            mail.set_template_id(email.template_id)
+            mail.template_id = email.template_id
             if hasattr(email, 'substitutions'):
                 for k, v in email.substitutions.items():
                     personalization.add_substitution(Substitution(k, v))
