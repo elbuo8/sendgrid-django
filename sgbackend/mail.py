@@ -67,23 +67,21 @@ class SendGridBackend(BaseEmailBackend):
         return count
 
     def _build_sg_mail(self, email):
-        mail = Mail()
         from_name, from_email = rfc822.parseaddr(email.from_email)
-        # Python sendgrid client should improve
-        # sendgrid/helpers/mail/mail.py:164
         if not from_name:
             from_name = None
-        mail.set_from(Email(from_email, from_name))
-        mail.set_subject(email.subject)
+        mail = Mail()
+        mail.from_email = Email(from_email, from_name)
+        mail.subject = email.subject
 
         personalization = Personalization()
+        personalization.subject = email.subject
         for e in email.to:
             personalization.add_to(Email(e))
         for e in email.cc:
             personalization.add_cc(Email(e))
         for e in email.bcc:
             personalization.add_bcc(Email(e))
-        personalization.set_subject(email.subject)
         mail.add_content(Content("text/plain", email.body))
         if isinstance(email, EmailMultiAlternatives):
             for alt in email.alternatives:
@@ -99,7 +97,7 @@ class SendGridBackend(BaseEmailBackend):
                 mail.add_category(Category(c))
 
         if hasattr(email, 'template_id'):
-            mail.set_template_id(email.template_id)
+            mail.template_id = email.template_id
             if hasattr(email, 'substitutions'):
                 for k, v in email.substitutions.items():
                     personalization.add_substitution(Substitution(k, v))
@@ -110,18 +108,18 @@ class SendGridBackend(BaseEmailBackend):
         for attachment in email.attachments:
             if isinstance(attachment, MIMEBase):
                 attach = Attachment()
-                attach.set_filename(attachment.get_filename())
-                attach.set_content(base64.b64encode(attachment.get_payload()))
+                attach.filename = attachment.get_filename()
+                attach.content = base64.b64encode(attachment.get_payload())
                 mail.add_attachment(attach)
             elif isinstance(attachment, tuple):
                 attach = Attachment()
-                attach.set_filename(attachment[0])
+                attach.filename = attachment[0]
                 base64_attachment = base64.b64encode(attachment[1])
                 if sys.version_info >= (3,):
-                    attach.set_content(str(base64_attachment, 'utf-8'))
+                    attach.content = str(base64_attachment, 'utf-8')
                 else:
-                    attach.set_content(base64_attachment)
-                attach.set_type(attachment[2])
+                    attach.content = base64_attachment
+                attach.type = attachment[2]
                 mail.add_attachment(attach)
 
         mail.add_personalization(personalization)
