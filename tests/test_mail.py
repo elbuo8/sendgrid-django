@@ -69,6 +69,45 @@ class SendGridBackendTests(TestCase):
                  'from': {'email': 'webmaster@localhost'}, 'subject': ''}
             )
 
+    def test_build_w_reply_to_sg_email(self):
+        # Test setting a Reply-To header.
+        msg = EmailMessage()
+        msg.extra_headers = {'Reply-To': 'andrii.soldatenko@test.com'}
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            mail = SendGridBackend()._build_sg_mail(msg)
+            self.assertEqual(
+                mail,
+                {'content': [{'value': '', 'type': 'text/plain'}],
+                 'personalizations': [{'subject': ''}],
+                 'reply_to': {'email': 'andrii.soldatenko@test.com'},
+                 'from': {'email': 'webmaster@localhost'}, 'subject': ''}
+            )
+        # Test using the reply_to attribute.
+        msg = EmailMessage(reply_to=('andrii.soldatenko@test.com',))
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            mail = SendGridBackend()._build_sg_mail(msg)
+            self.assertEqual(
+                mail,
+                {'content': [{'value': '', 'type': 'text/plain'}],
+                 'personalizations': [{'subject': ''}],
+                 'reply_to': {'email': 'andrii.soldatenko@test.com'},
+                 'from': {'email': 'webmaster@localhost'}, 'subject': ''}
+            )
+        # Test using "name <email>" format.
+        msg = EmailMessage(
+            reply_to=('Andrii Soldatenko <andrii.soldatenko@test.com>',))
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            mail = SendGridBackend()._build_sg_mail(msg)
+            self.assertEqual(
+                mail,
+                {'content': [{'value': '', 'type': 'text/plain'}],
+                 'personalizations': [{'subject': ''}],
+                 'reply_to': {
+                    'name': 'Andrii Soldatenko',
+                    'email': 'andrii.soldatenko@test.com'},
+                 'from': {'email': 'webmaster@localhost'}, 'subject': ''}
+            )
+
     def test_build_empty_multi_alternatives_sg_email(self):
         html_content = '<p>This is an <strong>important</strong> message.</p>'
         msg = EmailMultiAlternatives()
