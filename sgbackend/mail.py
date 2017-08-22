@@ -60,8 +60,7 @@ class SendGridBackend(BaseEmailBackend):
         for email in emails:
             mail = self._build_sg_mail(email)
             try:
-                payload = mail.get()
-                self.sg.client.mail.send.post(request_body=payload)
+                self.sg.client.mail.send.post(request_body=mail)
                 count += 1
             except HTTPError as e:
                 if not self.fail_silently:
@@ -131,4 +130,4 @@ class SendGridBackend(BaseEmailBackend):
                 mail.add_attachment(attach)
 
         mail.add_personalization(personalization)
-        return mail
+        return mail.get()
