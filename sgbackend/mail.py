@@ -101,17 +101,17 @@ class SendGridBackend(BaseEmailBackend):
         if hasattr(email, 'template_id'):
             mail.set_template_id(email.template_id)
             if hasattr(email, 'substitutions'):
-                for k, v in email.substitutions.items():
-                    personalization.add_substitution(Substitution(k, v))
+                for key, value in email.substitutions.items():
+                    personalization.add_substitution(Substitution(key, value))
 
         # SendGrid does not support adding Reply-To as an extra
         # header, so it needs to be manually removed if it exists.
         reply_to_string = ""
-        for k, v in email.extra_headers.items():
-            if k.lower() == "reply-to":
-                reply_to_string = v
+        for key, value in email.extra_headers.items():
+            if key.lower() == "reply-to":
+                reply_to_string = value
             else:
-                mail.add_header({k: v})
+                mail.add_header({key: value})
         # Note that if you set a "Reply-To" header *and* the reply_to
         # attribute, the header's value will be used.
         if not mail.reply_to and hasattr(email, "reply_to") and email.reply_to:
