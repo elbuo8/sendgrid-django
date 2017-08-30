@@ -6,7 +6,7 @@ from email.mime.base import MIMEBase
 
 try:
     from urllib.error import HTTPError  # pragma: no cover
-except ImportError: # pragma: no cover
+except ImportError:  # pragma: no cover
     from urllib2 import HTTPError  # pragma: no cover
 
 try:
@@ -27,14 +27,15 @@ from sendgrid.helpers.mail import (
     Email,
     Mail,
     Personalization,
-    Substitution
-)
+    Substitution,
+    Section)
 
 
 class SendGridBackend(BaseEmailBackend):
     '''
     SendGrid Web API Backend
     '''
+
     def __init__(self, fail_silently=False, **kwargs):
         super(SendGridBackend, self).__init__(
             fail_silently=fail_silently, **kwargs)
@@ -103,6 +104,10 @@ class SendGridBackend(BaseEmailBackend):
             if hasattr(email, 'substitutions'):
                 for k, v in email.substitutions.items():
                     personalization.add_substitution(Substitution(k, v))
+
+        if hasattr(email, 'sections'):
+            for k, v in email.sections.items():
+                mail.add_section(Section(k, v))
 
         for k, v in email.extra_headers.items():
             mail.add_header({k: v})

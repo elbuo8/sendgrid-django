@@ -66,6 +66,43 @@ Example
 
     mail.send()
 
+Example of section usage
+------------------------
+
+.. code:: python
+
+
+    mail = EmailMultiAlternatives(
+      subject="A Subject",
+      body="This is a simple text email body.",
+      from_email="Some Person <hello@example.com>",
+      to=["another_person@example.com"],
+      headers={"Reply-To": "support@sendgrid.com"}
+    )
+    # Add template
+    mail.template_id = 'YOUR TEMPLATE ID FROM SENDGRID ADMIN'
+
+    html_content = "<b>%subst-1%</b> and %subst-2%"
+    mail.attach_alternative(html_content, 'text/html', )
+
+    # Section substitutions you specify here will be used when the template is rendered
+    # See the 'section' docs @ sendgrid
+    mail.substitutions = {
+      '%subst-1%': 'Lets put %section-1%',
+      '%subst-2%': '%section-2%'
+    }
+    mail.sections = {
+      '%section-1%': 'some interesting content here',
+      '%section-2%': '(more interesting content, up to 10k bytes)',
+    }
+
+    mail.send()
+
+
+Section usage result
+----------
+    **Lets put some interesting content here**. Here is something else: (more interesting content, up to 10k bytes)
+
 
 License
 -------

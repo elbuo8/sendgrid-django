@@ -130,6 +130,20 @@ class SendGridBackendTests(TestCase):
                  'subject': ''}
             )
 
+    def test_build_sg_email_w_sections(self):
+        msg = EmailMessage()
+        msg.sections = {'foo': 'bar'}
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            mail = SendGridBackend()._build_sg_mail(msg)
+            self.assertEqual(
+                mail,
+                {'content': [{'type': 'text/plain', 'value': ''}],
+                 'from': {'email': 'webmaster@localhost'},
+                 'personalizations': [{'subject': ''}],
+                 'sections': {'foo': 'bar'},
+                 'subject': ''}
+            )
+
     def test_build_sg_email_w_extra_headers(self):
         msg = EmailMessage()
         msg.extra_headers = {'EXTRA_HEADER': 'VALUE'}
