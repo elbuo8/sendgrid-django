@@ -57,7 +57,7 @@ class SendGridBackend(BaseEmailBackend):
 
         count = 0
         for email in emails:
-            mail = self._build_sg_mail(email)
+            mail = self._build_sg_mail(self._force_trans(email))
             try:
                 self.sg.client.mail.send.post(request_body=mail)
                 count += 1
@@ -126,3 +126,11 @@ class SendGridBackend(BaseEmailBackend):
 
         mail.add_personalization(personalization)
         return mail.get()
+
+    def _force_trans(self, email):
+        """
+        Force critical strings to unicode in preparation for JSON
+        serialization to ensure compatibility with lazy translation
+        """
+        email.subject = str(email.subject)
+        return email
