@@ -101,11 +101,31 @@ class SendGridBackend(BaseEmailBackend):
         if hasattr(email, 'template_id'):
             mail.set_template_id(email.template_id)
             if hasattr(email, 'substitutions'):
-                for k, v in email.substitutions.items():
-                    personalization.add_substitution(Substitution(k, v))
+                for key, value in email.substitutions.items():
+                    personalization.add_substitution(Substitution(key, value))
 
-        for k, v in email.extra_headers.items():
-            mail.add_header({k: v})
+        # SendGrid does not support adding Reply-To as an extra
+        # header, so it needs to be manually removed if it exists.
+        reply_to_string = ""
+        for key, value in email.extra_headers.items():
+            if key.lower() == "reply-to":
+                reply_to_string = value
+            else:
+                mail.add_header({key: value})
+        # Note that if you set a "Reply-To" header *and* the reply_to
+        # attribute, the header's value will be used.
+        if not mail.reply_to and hasattr(email, "reply_to") and email.reply_to:
+            # SendGrid only supports setting Reply-To to a single address.
+            # See https://github.com/sendgrid/sendgrid-csharp/issues/339.
+            reply_to_string = email.reply_to[0]
+        # Determine whether reply_to contains a name and email address, or
+        # just an email address.
+        if reply_to_string:
+            reply_to_name, reply_to_email = rfc822.parseaddr(reply_to_string)
+            if reply_to_name and reply_to_email:
+                mail.set_reply_to(Email(reply_to_email, reply_to_name))
+            elif reply_to_email:
+                mail.set_reply_to(Email(reply_to_email))
 
         for attachment in email.attachments:
             if isinstance(attachment, MIMEBase):
