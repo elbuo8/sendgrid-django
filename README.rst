@@ -92,5 +92,8 @@ Development
 Install dependencies::
     `pip install -r requirements-dev.txt`
 
-Run the tests with coverage
+Run the tests with coverage::
     `pytest --cov=sgbackend`
+
+If you see the error "No module named sgbackend", run::
+    `pip install -e .`
