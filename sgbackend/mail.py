@@ -38,7 +38,10 @@ class SendGridBackend(BaseEmailBackend):
     def __init__(self, fail_silently=False, **kwargs):
         super(SendGridBackend, self).__init__(
             fail_silently=fail_silently, **kwargs)
-        self.api_key = getattr(settings, "SENDGRID_API_KEY", None)
+        if 'api_key' in kwargs:
+            self.api_key = kwargs['api_key']
+        else:
+            self.api_key = getattr(settings, "SENDGRID_API_KEY", None)
 
         if not self.api_key:
             raise ImproperlyConfigured('''
