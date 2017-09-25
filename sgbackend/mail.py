@@ -73,8 +73,8 @@ class SendGridBackend(BaseEmailBackend):
         # sendgrid/helpers/mail/mail.py:164
         if not from_name:
             from_name = None
-        mail.set_from(Email(from_email, from_name))
-        mail.set_subject(email.subject)
+        mail.from_email = Email(from_email, from_name)
+        mail.subject = email.subject
 
         personalization = Personalization()
         for e in email.to:
@@ -83,7 +83,7 @@ class SendGridBackend(BaseEmailBackend):
             personalization.add_cc(Email(e))
         for e in email.bcc:
             personalization.add_bcc(Email(e))
-        personalization.set_subject(email.subject)
+        personalization.subject = email.subject
         mail.add_content(Content("text/plain", email.body))
         if isinstance(email, EmailMultiAlternatives):
             for alt in email.alternatives:
@@ -99,7 +99,7 @@ class SendGridBackend(BaseEmailBackend):
                 mail.add_category(Category(c))
 
         if hasattr(email, 'template_id'):
-            mail.set_template_id(email.template_id)
+            mail.template_id = email.template_id
             if hasattr(email, 'substitutions'):
                 for key, value in email.substitutions.items():
                     personalization.add_substitution(Substitution(key, value))
@@ -123,9 +123,9 @@ class SendGridBackend(BaseEmailBackend):
         if reply_to_string:
             reply_to_name, reply_to_email = rfc822.parseaddr(reply_to_string)
             if reply_to_name and reply_to_email:
-                mail.set_reply_to(Email(reply_to_email, reply_to_name))
+                mail.reply_to = Email(reply_to_email, reply_to_name)
             elif reply_to_email:
-                mail.set_reply_to(Email(reply_to_email))
+                mail.reply_to = Email(reply_to_email)
 
         for attachment in email.attachments:
             if isinstance(attachment, MIMEBase):
