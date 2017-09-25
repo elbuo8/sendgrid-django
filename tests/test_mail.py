@@ -188,7 +188,7 @@ class SendGridBackendTests(TestCase):
         msg = EmailMessage()
         msg.subject = 'String literal subject'
         with self.settings(SENDGRID_API_KEY='test_key'):
-            mail = SendGridBackend()._force_trans(msg):
+            mail = SendGridBackend()._force_trans(msg)
             self.assertEqual(
                 mail['subject'],
                 'String literal subject'
@@ -198,7 +198,7 @@ class SendGridBackendTests(TestCase):
         msg = EmailMessage()
         msg.subject = _('Proxy subject')
         with self.settings(SENDGRID_API_KEY='test_key'):
-            mail = SendGridBackend()._force_trans(msg):
+            mail = SendGridBackend()._force_trans(msg)
             self.assertEqual(
                 mail['subject'],
                 'Proxy subject'
