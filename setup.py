@@ -14,7 +14,7 @@ setup(
     license='MIT',
     description='SendGrid Backend for Django',
     long_description=open('./README.rst').read(),
-    install_requires=["sendgrid >= 3.5, < 4"],
+    install_requires=["sendgrid == 5.2.0"],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: Web Environment",
