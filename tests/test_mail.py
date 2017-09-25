@@ -3,6 +3,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage
 from django.core.mail import EmailMultiAlternatives
 from django.test import SimpleTestCase as TestCase
+from django.utils.translation import ugettext as _
 
 from sgbackend import SendGridBackend
 
@@ -181,4 +182,24 @@ class SendGridBackendTests(TestCase):
                  'headers': {'EXTRA_HEADER': 'VALUE'},
                  'personalizations': [{'subject': ''}],
                  'subject': ''}
+            )
+
+    def test_force_trans_w_string_literal(self):
+        msg = EmailMessage()
+        msg.subject = 'String literal subject'
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            mail = SendGridBackend()._force_trans(msg):
+            self.assertEqual(
+                mail['subject'],
+                'String literal subject'
+            )
+
+    def test_force_trans_w_proxy(self):
+        msg = EmailMessage()
+        msg.subject = _('Proxy subject')
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            mail = SendGridBackend()._force_trans(msg):
+            self.assertEqual(
+                mail['subject'],
+                'Proxy subject'
             )
