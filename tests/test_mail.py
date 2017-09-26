@@ -184,6 +184,9 @@ class SendGridBackendTests(TestCase):
             )
 
     def test_build_sg_email_w_string_attachment(self):
+        """
+        Test text/* attachment passed as a text string
+        """
         attachments = (('file.txt', 'String content', 'text/plain'),)
         msg = EmailMessage(attachments=attachments)
         with self.settings(SENDGRID_API_KEY='test_key'):
@@ -194,12 +197,15 @@ class SendGridBackendTests(TestCase):
                  'subject': '', 'personalizations': [{'subject': ''}],
                  'content': [{'type': 'text/plain', 'value': ''}],
                  'attachments': [{
-                    'content': 'String content',
+                    'content': 'U3RyaW5nIGNvbnRlbnQ=',
                     'type': 'text/plain',
                     'filename': 'file.txt'}]}
             )
 
     def test_build_sg_email_w_binary_attachment(self):
+        """
+        Test text attachment passed as binary
+        """
         attachments = (('file.txt', b'Binary content', 'text/plain'),)
         msg = EmailMessage(attachments=attachments)
         with self.settings(SENDGRID_API_KEY='test_key'):
@@ -210,8 +216,28 @@ class SendGridBackendTests(TestCase):
                  'subject': '', 'personalizations': [{'subject': ''}],
                  'content': [{'type': 'text/plain', 'value': ''}],
                  'attachments': [{
-                    'content': 'Binary content',
+                    'content': 'QmluYXJ5IGNvbnRlbnQ=',
                     'type': 'text/plain',
                     'filename': 'file.txt'}]}
             )
 
+    def test_build_sg_email_w_image_attachment(self):
+        """
+        Test image attachment
+        """
+        with open('tests/assets/test-image.png', 'rb') as f:
+            content = f.read()
+        attachments = (('file.png', content, 'image/png'),)
+        msg = EmailMessage(attachments=attachments)
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            mail = SendGridBackend()._build_sg_mail(msg)
+            self.assertEqual(
+                mail,
+                {'from': {'email': 'webmaster@localhost'},
+                 'subject': '', 'personalizations': [{'subject': ''}],
+                 'content': [{'type': 'text/plain', 'value': ''}],
+                 'attachments': [{
+                    'content': 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA8ElEQVR42o2TQQqCQBiFhdq5alFt3YbgBYICD+JB7AJ1AEFaiKtAOkRQ64iWgpjrVtU21P4f/oGHjDkDH/i/ee8xM6DVXfPpzCUSoiRqoRTNRa8unBHtAFlfOGeDIXk3fJSNOxEQD5lfQitaIJ6WMyrsQfPeGljsAb/HQgpCYlCQgD9loQLBNiiwwV+x0MjwtQwXeyXT8FCrRtMCOEHNQwGCbxD2wV+wEMM1PoTzJ+wQbyiIlcjDhjjI95VYQnBF3GQPcZQhYgH+gxMxgoKxJhx1j3cmnsSaWOgeDrj03XGrTH8KdkOvPCFCjR7yXlf/AfSXkoJCC4ZeAAAAAElFTkSuQmCC',
+                    'type': 'image/png',
+                    'filename': 'file.png'}]}
+            )

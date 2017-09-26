@@ -129,28 +129,33 @@ class SendGridBackend(BaseEmailBackend):
 
         for attachment in email.attachments:
             if isinstance(attachment, MIMEBase):
-                attach = Attachment()
                 attach.set_filename(attachment.get_filename())
-                attach.set_content(base64.b64encode(attachment.get_payload()))
+                attach.set_content(str(
+                    base64.b64encode(attachment.get_payload()),
+                    'utf-8'))
+
                 mail.add_attachment(attach)
+
             elif isinstance(attachment, tuple):
+                filename, content, mimetype = attachment
+                basetype, subtype = mimetype.split('/', 1)
+
+                if basetype == 'text' and isinstance(content, str):
+                    # Django expects a text string if the MIME type is 
+                    # text/*, so we'll need to encode th string
+                    content = str(
+                        base64.b64encode(content.encode('utf-8')),
+                        'utf-8')
+
+                if isinstance(content, bytes):
+                    # If the content is bytes, simply encode
+                    content = str(base64.b64encode(content), 'utf-8')
+
                 attach = Attachment()
-                attach.set_filename(attachment[0])
-                basetype, subtype = attachment[2].split('/', 1)
-                if basetype == 'text':
-                    # Django will have already encoded attachments with type
-                    # text/* as a string, so no need to encode again
-                    # https://docs.djangoproject.com/en/dev/_modules/django/core/mail/message/#EmailMessage
-                    attach.set_content(attachment[1])
-                else:
-                    # For all other types, we'll need to encode it correctly
-                    # to make it serializable for sending as JSON to the API
-                    base64_attachment = base64.b64encode(attachment[1])
-                    if sys.version_info >= (3,):
-                        attach.set_content(str(base64_attachment, 'utf-8'))
-                    else:
-                        attach.set_content(base64_attachment)
-                attach.set_type(attachment[2])
+                attach.set_filename(filename)
+                attach.set_content(content)
+                attach.set_type(mimetype)
+
                 mail.add_attachment(attach)
 
         mail.add_personalization(personalization)
