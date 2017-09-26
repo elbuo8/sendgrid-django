@@ -136,11 +136,20 @@ class SendGridBackend(BaseEmailBackend):
             elif isinstance(attachment, tuple):
                 attach = Attachment()
                 attach.set_filename(attachment[0])
-                base64_attachment = base64.b64encode(attachment[1])
-                if sys.version_info >= (3,):
-                    attach.set_content(str(base64_attachment, 'utf-8'))
+                basetype, subtype = attachment[2].split('/', 1)
+                if basetype == 'text':
+                    # Django will have already encoded attachments with type
+                    # text/* as a string, so no need to encode again
+                    # https://docs.djangoproject.com/en/dev/_modules/django/core/mail/message/#EmailMessage
+                    attach.set_content(attachment[1])
                 else:
-                    attach.set_content(base64_attachment)
+                    # For all other types, we'll need to encode it correctly
+                    # to make it serializable for sending as JSON to the API
+                    base64_attachment = base64.b64encode(attachment[1])
+                    if sys.version_info >= (3,):
+                        attach.set_content(str(base64_attachment, 'utf-8'))
+                    else:
+                        attach.set_content(base64_attachment)
                 attach.set_type(attachment[2])
                 mail.add_attachment(attach)
 
