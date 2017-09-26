@@ -182,3 +182,36 @@ class SendGridBackendTests(TestCase):
                  'personalizations': [{'subject': ''}],
                  'subject': ''}
             )
+
+    def test_build_sg_email_w_string_attachment(self):
+        attachments = (('file.txt', 'String content', 'text/plain'),)
+        msg = EmailMessage(attachments=attachments)
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            mail = SendGridBackend()._build_sg_mail(msg)
+            self.assertEqual(
+                mail,
+                {'from': {'email': 'webmaster@localhost'},
+                 'subject': '', 'personalizations': [{'subject': ''}],
+                 'content': [{'type': 'text/plain', 'value': ''}],
+                 'attachments': [{
+                    'content': 'String content',
+                    'type': 'text/plain',
+                    'filename': 'file.txt'}]}
+            )
+
+    def test_build_sg_email_w_binary_attachment(self):
+        attachments = (('file.txt', b'Binary content', 'text/plain'),)
+        msg = EmailMessage(attachments=attachments)
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            mail = SendGridBackend()._build_sg_mail(msg)
+            self.assertEqual(
+                mail,
+                {'from': {'email': 'webmaster@localhost'},
+                 'subject': '', 'personalizations': [{'subject': ''}],
+                 'content': [{'type': 'text/plain', 'value': ''}],
+                 'attachments': [{
+                    'content': 'Binary content',
+                    'type': 'text/plain',
+                    'filename': 'file.txt'}]}
+            )
+
