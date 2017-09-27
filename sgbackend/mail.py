@@ -128,13 +128,18 @@ class SendGridBackend(BaseEmailBackend):
                 mail.set_reply_to(Email(reply_to_email))
 
         for attachment in email.attachments:
+            filename, content, mimetype = (None, None, None)
             if isinstance(attachment, MIMEBase):
-                attach.set_filename(attachment.get_filename())
-                attach.set_content(str(
-                    base64.b64encode(attachment.get_payload()),
-                    'utf-8'))
-
-                mail.add_attachment(attach)
+                # If the attachment is a MIMEBase instance
+                filename = attachment.get_filename()
+                content = attachment.get_payload()
+                mimetype = attachment.get_content_type()
+                if attachment.get_content_maintype() == 'text' \
+                    and isinstance(content, str):
+                    content = base64.b64encode(
+                        content.encode('utf-8')).decode('utf-8')
+                else:
+                    content = base64.b64encode(content).decode('utf-8')
 
             elif isinstance(attachment, tuple):
                 filename, content, mimetype = attachment
@@ -142,21 +147,23 @@ class SendGridBackend(BaseEmailBackend):
 
                 if basetype == 'text' and isinstance(content, str):
                     # Django expects a text string if the MIME type is 
-                    # text/*, so we'll need to encode th string
-                    content = str(
-                        base64.b64encode(content.encode('utf-8')),
-                        'utf-8')
+                    # text/*, so we'll need to encode the string
+                    content = base64.b64encode(
+                        content.encode('utf-8')).decode('utf-8')
 
                 if isinstance(content, bytes):
-                    # If the content is bytes, simply encode
-                    content = str(base64.b64encode(content), 'utf-8')
+                    # If the content is bytes, simply encode then convert
+                    # to a text string
+                    content = base64.b64encode(content).decode('utf-8')
 
-                attach = Attachment()
-                attach.set_filename(filename)
-                attach.set_content(content)
-                attach.set_type(mimetype)
+            assert content is not None
 
-                mail.add_attachment(attach)
+            attach = Attachment()
+            attach.set_filename(filename)
+            attach.set_content(content)
+            attach.set_type(mimetype)
+
+            mail.add_attachment(attach)
 
         mail.add_personalization(personalization)
         return mail.get()
