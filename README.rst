@@ -60,6 +60,12 @@ Example
             ('somefilename.pdf', file.read(), 'application/pdf')
         ]
 
+    # Add categories
+    mail.categories = [
+        'work',
+        'urgent',
+    ]
+
     mail.attach_alternative(
         "<p>This is a simple HTML email body</p>", "text/html"
     )
