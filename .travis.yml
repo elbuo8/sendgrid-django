@@ -13,9 +13,8 @@ python:
 install:
   - pip install -e .
   - pip install -q Django==$DJANGO_VERSION
-  - pip install -rrequirements-dev.txt
-  - pip install codecov
+  - pip install -r requirements-test.txt
 script:
-  - make coverage
+  - py.test --cov sgbackend --cov-report term-missing tests/
 after_success:
   - codecov

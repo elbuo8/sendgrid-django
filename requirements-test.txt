@@ -1,4 +1,4 @@
+codecov
 coverage
-django
 pytest
 pytest-cov
