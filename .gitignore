@@ -17,6 +17,10 @@ __pycache__/
 *.so
 
 
+# Distribution
+*.egg-info/
+
+
 # Testing
 
 ## Unit test / coverage reports
