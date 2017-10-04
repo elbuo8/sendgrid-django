@@ -103,8 +103,8 @@ class SendGridBackendTests(TestCase):
                 {'content': [{'value': '', 'type': 'text/plain'}],
                  'personalizations': [{'subject': ''}],
                  'reply_to': {
-                    'name': 'Andrii Soldatenko',
-                    'email': 'andrii.soldatenko@test.com'},
+                     'name': 'Andrii Soldatenko',
+                     'email': 'andrii.soldatenko@test.com'},
                  'from': {'email': 'webmaster@localhost'}, 'subject': ''}
             )
 
@@ -197,4 +197,43 @@ class SendGridBackendTests(TestCase):
                  'from': {'email': 'webmaster@localhost'},
                  'personalizations': [{'subject': ''}],
                  'subject': ''}
+            )
+
+    def test_build_sg_email_w_asm_raises_if_group_id_doesnt_exist(self):
+        msg = EmailMessage()
+        msg.asm = {}
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            with self.assertRaises(ImproperlyConfigured):
+                SendGridBackend()._build_sg_mail(msg)
+
+    def test_build_sg_email_w_asm(self):
+        msg = EmailMessage()
+        msg.asm = {
+            'group_id': 1
+        }
+        # With only 'group_id'
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            mail = SendGridBackend()._build_sg_mail(msg)
+            self.assertEqual(
+                mail,
+                {'content': [{'type': 'text/plain', 'value': ''}],
+                 'from': {'email': 'webmaster@localhost'},
+                 'personalizations': [{'subject': ''}],
+                 'subject': '',
+                 'asm': {'group_id': 1}}
+            )
+        msg.asm = {
+            'group_id': 1,
+            'groups_to_display': [1, 2, 3]
+        }
+        # With both 'group_id' and 'groups_to_display'
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            mail = SendGridBackend()._build_sg_mail(msg)
+            self.assertEqual(
+                mail,
+                {'content': [{'type': 'text/plain', 'value': ''}],
+                 'from': {'email': 'webmaster@localhost'},
+                 'personalizations': [{'subject': ''}],
+                 'subject': '',
+                 'asm': {'group_id': 1, 'groups_to_display': [1, 2, 3]}}
             )
