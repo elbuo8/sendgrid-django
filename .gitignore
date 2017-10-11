@@ -40,10 +40,18 @@ coverage.xml
 ## dotenv
 .env
 
+<<<<<<< HEAD
 ## direnv
 .direnv/
 .envrc
 
 ## virtualenv
+=======
+# direnv
+.direnv/
+.envrc
+
+# virtualenv
+>>>>>>> cf2631112ea33bd0bbf1303ecc8441f826ce623d
 venv/
 ENV/
