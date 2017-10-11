@@ -1,3 +1,5 @@
 coverage
+django
 pytest
 pytest-cov
+twine
