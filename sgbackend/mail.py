@@ -5,11 +5,6 @@ import sys
 from email.mime.base import MIMEBase
 
 try:
-    from urllib.error import HTTPError  # pragma: no cover
-except ImportError:  # pragma: no cover
-    from urllib2 import HTTPError  # pragma: no cover
-
-try:
     import rfc822
 except ImportError:
     import email.utils as rfc822
@@ -18,6 +13,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMultiAlternatives
 from django.core.mail.backends.base import BaseEmailBackend
+from python_http_client import exceptions
 
 import sendgrid
 from sendgrid.helpers.mail import (
@@ -67,7 +63,7 @@ class SendGridBackend(BaseEmailBackend):
             try:
                 self.sg.client.mail.send.post(request_body=mail)
                 count += 1
-            except HTTPError as e:
+            except exceptions.HTTPError as e:
                 if not self.fail_silently:
                     raise
         return count
