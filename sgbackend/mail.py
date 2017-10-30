@@ -27,7 +27,8 @@ from sendgrid.helpers.mail import (
     Email,
     Mail,
     Personalization,
-    Substitution
+    Substitution,
+    CustomArg
 )
 
 
@@ -100,6 +101,10 @@ class SendGridBackend(BaseEmailBackend):
         if hasattr(email, 'categories'):
             for c in email.categories:
                 mail.add_category(Category(c))
+
+        if hasattr(email, 'custom_args'):
+            for k, v in email.custom_args.items():
+                mail.add_custom_arg(CustomArg(k, v))
 
         if hasattr(email, 'template_id'):
             mail.set_template_id(email.template_id)
