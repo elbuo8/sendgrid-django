@@ -182,3 +182,19 @@ class SendGridBackendTests(TestCase):
                  'personalizations': [{'subject': ''}],
                  'subject': ''}
             )
+
+    def test_build_sg_email_w_custom_args(self):
+        msg = EmailMessage()
+        msg.custom_args = {'custom_arg1': '12345-abcdef'}
+
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            mail = SendGridBackend()._build_sg_mail(msg)
+
+            self.assertEqual(
+                mail,
+                {'content': [{'type': 'text/plain', 'value': ''}],
+                 'custom_args': {'custom_arg1': '12345-abcdef'},
+                 'from': {'email': 'webmaster@localhost'},
+                 'personalizations': [{'subject': ''}],
+                 'subject': ''}
+            )

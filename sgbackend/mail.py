@@ -24,11 +24,11 @@ from sendgrid.helpers.mail import (
     Attachment,
     Category,
     Content,
+    CustomArg,
     Email,
     Mail,
     Personalization,
     Substitution,
-    CustomArg
 )
 
 
