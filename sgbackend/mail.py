@@ -3,11 +3,7 @@ from .version import __version__
 import base64
 import sys
 from email.mime.base import MIMEBase
-
-try:
-    from urllib.error import HTTPError  # pragma: no cover
-except ImportError: # pragma: no cover
-    from urllib2 import HTTPError  # pragma: no cover
+from python_http_client.exceptions import HTTPError
 
 try:
     import rfc822
