@@ -2,5 +2,4 @@ coverage
 pytest
 pytest-cov
 pytest-django
-Django
 sendgrid>=3.6.5,<4
