@@ -1,9 +1,9 @@
 language: python
 sudo: false
 env:
-  - DJANGO_VERSION=1.10.4
-  - DJANGO_VERSION=1.9.12
-  - DJANGO_VERSION=1.8.17
+  - DJANGO_VERSION=1.10.*
+  - DJANGO_VERSION=1.9.*
+  - DJANGO_VERSION=1.8.*
 python:
   - "2.7"
   - "3.4"
