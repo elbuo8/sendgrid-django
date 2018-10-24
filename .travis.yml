@@ -9,7 +9,7 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
-  - "3.7"
+  - "nightly"
 install:
   - pip install -e .
   - pip install -Ur requirements-dev.txt Django==$DJANGO_VERSION
