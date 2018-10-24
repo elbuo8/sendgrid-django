@@ -13,7 +13,7 @@ python:
 install:
   - pip install -e .
   - pip install -q Django==$DJANGO_VERSION
-  - pip install -rrequirements-dev.txt
+  - pip install -Ur requirements-dev.txt
   - pip install codecov
 script:
   - make coverage
