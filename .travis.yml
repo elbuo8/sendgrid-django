@@ -12,8 +12,7 @@ python:
   - "nightly" # currently points to 3.7-dev
 install:
   - pip install -e .
-  - pip install -q Django==$DJANGO_VERSION
-  - pip install -Ur requirements-dev.txt
+  - pip install -Ur requirements-dev.txt Django==$DJANGO_VERSION
   - pip install codecov
 script:
   - make coverage
