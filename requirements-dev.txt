@@ -1,5 +1,5 @@
 coverage
-pytest
+pytest>=3.6
 pytest-cov
 pytest-django
 Django
