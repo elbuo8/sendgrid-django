@@ -144,7 +144,12 @@ class SendGridBackend(BaseEmailBackend):
             elif isinstance(attachment, tuple):
                 attach = Attachment()
                 attach.set_filename(attachment[0])
-                base64_attachment = base64.b64encode(attachment[1])
+                # encoding the StringIO(Text mimetype) object. If attachment is BytesIO object, we don't need to encode
+                if type(attachment[1]) == str:
+                    attachment_object = attachment[1].encode()
+                else:
+                    attachment_object = attachment[1]
+                base64_attachment = base64.b64encode(attachment_object)
                 if sys.version_info >= (3,):
                     attach.set_content(str(base64_attachment, 'utf-8'))
                 else:
