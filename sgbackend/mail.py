@@ -144,7 +144,8 @@ class SendGridBackend(BaseEmailBackend):
             elif isinstance(attachment, tuple):
                 attach = Attachment()
                 attach.set_filename(attachment[0])
-                # encoding the StringIO(Text mimetype) object. If attachment is BytesIO object, we don't need to encode
+                # Encoding is required only for Python 3.6.
+                # Encoding the StringIO(Text Mimetype) object. BytesIO object will raise an exception for Python 3.6
                 try:
                     attachment_object = attachment[1].encode()
                 except:
