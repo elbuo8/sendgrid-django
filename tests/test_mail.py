@@ -43,6 +43,21 @@ class SendGridBackendTests(TestCase):
                  'from': {'email': 'webmaster@localhost'}, 'subject': ''}
             )
 
+        # Test using "name <email>" format.
+        msg = EmailMessage(to=('Andrii Soldatenko <andrii.soldatenko@test.com>',))
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            mail = SendGridBackend()._build_sg_mail(msg)
+            self.assertEqual(
+                mail,
+                {'content': [{'value': '', 'type': 'text/plain'}],
+                 'personalizations': [
+                     {'to': [
+                         {'name': 'Andrii Soldatenko',
+                          'email': 'andrii.soldatenko@test.com'}],
+                      'subject': ''}],
+                 'from': {'email': 'webmaster@localhost'}, 'subject': ''}
+            )
+
     def test_build_w_cc_sg_email(self):
         msg = EmailMessage(cc=('andrii.soldatenko@test.com',))
         with self.settings(SENDGRID_API_KEY='test_key'):
@@ -56,6 +71,21 @@ class SendGridBackendTests(TestCase):
                  'from': {'email': 'webmaster@localhost'}, 'subject': ''}
             )
 
+        # Test using "name <email>" format.
+        msg = EmailMessage(cc=('Andrii Soldatenko <andrii.soldatenko@test.com>',))
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            mail = SendGridBackend()._build_sg_mail(msg)
+            self.assertEqual(
+                mail,
+                {'content': [{'value': '', 'type': 'text/plain'}],
+                 'personalizations': [
+                     {'cc': [
+                         {'name': 'Andrii Soldatenko',
+                          'email': 'andrii.soldatenko@test.com'}],
+                      'subject': ''}],
+                 'from': {'email': 'webmaster@localhost'}, 'subject': ''}
+            )
+
     def test_build_w_bcc_sg_email(self):
         msg = EmailMessage(bcc=('andrii.soldatenko@test.com',))
         with self.settings(SENDGRID_API_KEY='test_key'):
@@ -65,6 +95,21 @@ class SendGridBackendTests(TestCase):
                 {'content': [{'value': '', 'type': 'text/plain'}],
                  'personalizations': [
                      {'bcc': [{'email': 'andrii.soldatenko@test.com'}],
+                      'subject': ''}],
+                 'from': {'email': 'webmaster@localhost'}, 'subject': ''}
+            )
+
+        # Test using "name <email>" format.
+        msg = EmailMessage(bcc=('Andrii Soldatenko <andrii.soldatenko@test.com>',))
+        with self.settings(SENDGRID_API_KEY='test_key'):
+            mail = SendGridBackend()._build_sg_mail(msg)
+            self.assertEqual(
+                mail,
+                {'content': [{'value': '', 'type': 'text/plain'}],
+                 'personalizations': [
+                     {'bcc': [
+                         {'name': 'Andrii Soldatenko',
+                          'email': 'andrii.soldatenko@test.com'}],
                       'subject': ''}],
                  'from': {'email': 'webmaster@localhost'}, 'subject': ''}
             )

@@ -72,21 +72,17 @@ class SendGridBackend(BaseEmailBackend):
 
     def _build_sg_mail(self, email):
         mail = Mail()
-        from_name, from_email = rfc822.parseaddr(email.from_email)
-        # Python sendgrid client should improve
-        # sendgrid/helpers/mail/mail.py:164
-        if not from_name:
-            from_name = None
-        mail.set_from(Email(from_email, from_name))
+
+        mail.set_from(self._process_email_addr(email.from_email))
         mail.set_subject(email.subject)
 
         personalization = Personalization()
         for e in email.to:
-            personalization.add_to(Email(e))
+            personalization.add_to(self._process_email_addr(e))
         for e in email.cc:
-            personalization.add_cc(Email(e))
+            personalization.add_cc(self._process_email_addr(e))
         for e in email.bcc:
-            personalization.add_bcc(Email(e))
+            personalization.add_bcc(self._process_email_addr(e))
         personalization.set_subject(email.subject)
         mail.add_content(Content("text/plain", email.body))
         if isinstance(email, EmailMultiAlternatives):
@@ -154,3 +150,13 @@ class SendGridBackend(BaseEmailBackend):
 
         mail.add_personalization(personalization)
         return mail.get()
+
+    def _process_email_addr(self, email_addr):
+        from_name, from_email = rfc822.parseaddr(email_addr)
+
+        # Python sendgrid client should improve
+        # sendgrid/helpers/mail/mail.py:164
+        if not from_name:
+            from_name = None
+
+        return Email(from_email, from_name)
