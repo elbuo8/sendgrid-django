@@ -14,10 +14,6 @@ class SendGridBackendTests(TestCase):
         with self.assertRaises(ImproperlyConfigured):
             SendGridBackend()
 
-    def test_if_not_emails(self):
-        with self.settings(SENDGRID_API_KEY='test_key'):
-            SendGridBackend().send_messages(emails=[])
-
     def test_build_empty_sg_mail(self):
         msg = EmailMessage()
         with self.settings(SENDGRID_API_KEY='test_key'):
