@@ -1,18 +1,45 @@
 language: python
 sudo: false
-env:
-  - DJANGO_VERSION=1.10.4
-  - DJANGO_VERSION=1.9.12
-  - DJANGO_VERSION=1.8.17
 python:
   - "2.7"
   - "3.4"
   - "3.5"
   - "3.6"
-  - "nightly" # currently points to 3.7-dev
+  - "3.7"
+  - "3.8"
+env:
+  - DJANGO_VERSION=1.11
+  - DJANGO_VERSION=2.0
+  - DJANGO_VERSION=2.1
+  - DJANGO_VERSION=2.2
+  - DJANGO_VERSION=3.0rc1
+jobs:
+  exclude:
+    - python: "3.8"
+      env: DJANGO_VERSION=1.11
+    - python: "2.7"
+      env: DJANGO_VERSION=2.0
+    - python: "3.8"
+      env: DJANGO_VERSION=2.0
+    - python: "2.7"
+      env: DJANGO_VERSION=2.1
+    - python: "3.4"
+      env: DJANGO_VERSION=2.1
+    - python: "3.8"
+      env: DJANGO_VERSION=2.1
+    - python: "2.7"
+      env: DJANGO_VERSION=2.2
+    - python: "3.4"
+      env: DJANGO_VERSION=2.2
+    - python: "2.7"
+      env: DJANGO_VERSION=3.0rc1
+    - python: "3.4"
+      env: DJANGO_VERSION=3.0rc1
+    - python: "3.5"
+      env: DJANGO_VERSION=3.0rc1
 install:
   - pip install -e .
-  - pip install -q Django==$DJANGO_VERSION
+  - pip install -q Django~=$DJANGO_VERSION
   - pip install -rrequirements-dev.txt
   - pip install codecov
 script:
