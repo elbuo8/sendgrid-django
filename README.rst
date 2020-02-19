@@ -2,13 +2,13 @@ SendGrid-django
 ===============
 
 .. image:: https://travis-ci.org/elbuo8/sendgrid-django.svg?branch=master
-   :target: https://travis-ci.org/elbuo8/sendgrid-django
+:target: https://travis-ci.org/elbuo8/sendgrid-django
    :alt: Travis CI
 .. image:: https://codecov.io/github/elbuo8/sendgrid-django/coverage.svg?branch=master
-   :target: https://codecov.io/github/elbuo8/sendgrid-django
+:target: https://codecov.io/github/elbuo8/sendgrid-django
    :alt: codecov.io
 
-Simple django backend to send email using SendGrid's Web API.
+    Simple django backend to send email using SendGrid's Web API.
 
 Installation
 ------------
@@ -65,6 +65,12 @@ Example
         'work',
         'urgent',
     ]
+
+    # Add asm(groups)
+    msg.asm = {
+            'group_id': 1,
+            'groups_to_display': [1, 2, 3] # This property is not necessary for ASM to work
+        }
 
     mail.attach_alternative(
         "<p>This is a simple HTML email body</p>", "text/html"

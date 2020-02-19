@@ -5,11 +5,6 @@ import sys
 from email.mime.base import MIMEBase
 
 try:
-    from urllib.error import HTTPError  # pragma: no cover
-except ImportError: # pragma: no cover
-    from urllib2 import HTTPError  # pragma: no cover
-
-try:
     import rfc822
 except ImportError:
     import email.utils as rfc822
@@ -18,9 +13,11 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMultiAlternatives
 from django.core.mail.backends.base import BaseEmailBackend
+from python_http_client import exceptions
 
 import sendgrid
 from sendgrid.helpers.mail import (
+    ASM,
     Attachment,
     Category,
     Content,
@@ -36,6 +33,7 @@ class SendGridBackend(BaseEmailBackend):
     '''
     SendGrid Web API Backend
     '''
+
     def __init__(self, fail_silently=False, **kwargs):
         super(SendGridBackend, self).__init__(
             fail_silently=fail_silently, **kwargs)
@@ -65,7 +63,7 @@ class SendGridBackend(BaseEmailBackend):
             try:
                 self.sg.client.mail.send.post(request_body=mail)
                 count += 1
-            except HTTPError as e:
+            except exceptions.HTTPError as e:
                 if not self.fail_silently:
                     raise
         return count
@@ -107,6 +105,20 @@ class SendGridBackend(BaseEmailBackend):
             if hasattr(email, 'substitutions'):
                 for key, value in email.substitutions.items():
                     personalization.add_substitution(Substitution(key, value))
+
+        if hasattr(email, 'asm'):
+            groups_to_display = None
+
+            if 'group_id' not in email.asm:
+                raise ImproperlyConfigured('''
+                                group_id must be declared in order for asm to work''')
+            group_id = email.asm['group_id']
+
+            if 'groups_to_display' in email.asm:
+                groups_to_display = email.asm['groups_to_display']
+
+            asm = ASM(group_id, groups_to_display)
+            mail.set_asm(asm)
 
         # SendGrid does not support adding Reply-To as an extra
         # header, so it needs to be manually removed if it exists.
