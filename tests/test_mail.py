@@ -23,7 +23,7 @@ class SendGridBackendTests(TestCase):
                 {'from': {'email': 'webmaster@localhost'},
                  'subject': '',
                  'content': [{'type': 'text/plain', 'value': ''}],
-                 'personalizations': [{'subject': ''}]}
+                 'personalizations': [{}]}
             )
 
     def test_build_w_to_sg_email(self):
@@ -34,8 +34,7 @@ class SendGridBackendTests(TestCase):
                 mail,
                 {'content': [{'value': '', 'type': 'text/plain'}],
                  'personalizations': [
-                     {'to': [{'email': 'andrii.soldatenko@test.com'}],
-                      'subject': ''}],
+                     {'to': [{'email': 'andrii.soldatenko@test.com'}],}],
                  'from': {'email': 'webmaster@localhost'}, 'subject': ''}
             )
 
@@ -49,8 +48,7 @@ class SendGridBackendTests(TestCase):
                  'personalizations': [
                      {'to': [
                          {'name': 'Andrii Soldatenko',
-                          'email': 'andrii.soldatenko@test.com'}],
-                      'subject': ''}],
+                          'email': 'andrii.soldatenko@test.com'}],}],
                  'from': {'email': 'webmaster@localhost'}, 'subject': ''}
             )
 
@@ -63,7 +61,7 @@ class SendGridBackendTests(TestCase):
                 {'content': [{'value': '', 'type': 'text/plain'}],
                  'personalizations': [
                      {'cc': [{'email': 'andrii.soldatenko@test.com'}],
-                      'subject': ''}],
+                      }],
                  'from': {'email': 'webmaster@localhost'}, 'subject': ''}
             )
 
@@ -78,7 +76,7 @@ class SendGridBackendTests(TestCase):
                      {'cc': [
                          {'name': 'Andrii Soldatenko',
                           'email': 'andrii.soldatenko@test.com'}],
-                      'subject': ''}],
+                      }],
                  'from': {'email': 'webmaster@localhost'}, 'subject': ''}
             )
 
@@ -91,7 +89,7 @@ class SendGridBackendTests(TestCase):
                 {'content': [{'value': '', 'type': 'text/plain'}],
                  'personalizations': [
                      {'bcc': [{'email': 'andrii.soldatenko@test.com'}],
-                      'subject': ''}],
+                      }],
                  'from': {'email': 'webmaster@localhost'}, 'subject': ''}
             )
 
@@ -106,7 +104,7 @@ class SendGridBackendTests(TestCase):
                      {'bcc': [
                          {'name': 'Andrii Soldatenko',
                           'email': 'andrii.soldatenko@test.com'}],
-                      'subject': ''}],
+                      }],
                  'from': {'email': 'webmaster@localhost'}, 'subject': ''}
             )
 
@@ -119,7 +117,7 @@ class SendGridBackendTests(TestCase):
             self.assertEqual(
                 mail,
                 {'content': [{'value': '', 'type': 'text/plain'}],
-                 'personalizations': [{'subject': ''}],
+                 'personalizations': [{}],
                  'reply_to': {'email': 'andrii.soldatenko@test.com'},
                  'from': {'email': 'webmaster@localhost'}, 'subject': ''}
             )
@@ -130,7 +128,7 @@ class SendGridBackendTests(TestCase):
             self.assertEqual(
                 mail,
                 {'content': [{'value': '', 'type': 'text/plain'}],
-                 'personalizations': [{'subject': ''}],
+                 'personalizations': [{}],
                  'reply_to': {'email': 'andrii.soldatenko@test.com'},
                  'from': {'email': 'webmaster@localhost'}, 'subject': ''}
             )
@@ -142,7 +140,7 @@ class SendGridBackendTests(TestCase):
             self.assertEqual(
                 mail,
                 {'content': [{'value': '', 'type': 'text/plain'}],
-                 'personalizations': [{'subject': ''}],
+                 'personalizations': [{}],
                  'reply_to': {
                     'name': 'Andrii Soldatenko',
                     'email': 'andrii.soldatenko@test.com'},
@@ -163,7 +161,7 @@ class SendGridBackendTests(TestCase):
                                        '<strong>important</strong> '
                                        'message.</p>'}],
                  'from': {'email': 'webmaster@localhost'},
-                 'personalizations': [{'subject': ''}],
+                 'personalizations': [{}],
                  'subject': ''}
             )
 
@@ -177,7 +175,7 @@ class SendGridBackendTests(TestCase):
                 {'categories': ['name'],
                  'content': [{'type': 'text/plain', 'value': ''}],
                  'from': {'email': 'webmaster@localhost'},
-                 'personalizations': [{'subject': ''}],
+                 'personalizations': [{}],
                  'subject': ''
                  }
             )
@@ -192,7 +190,7 @@ class SendGridBackendTests(TestCase):
                 {'template_id': 'template_id_123456',
                  'content': [{'type': 'text/plain', 'value': ''}],
                  'from': {'email': 'webmaster@localhost'},
-                 'personalizations': [{'subject': ''}],
+                 'personalizations': [{}],
                  'subject': ''
                  }
             )
@@ -206,7 +204,7 @@ class SendGridBackendTests(TestCase):
                 mail,
                 {'content': [{'type': 'text/plain', 'value': ''}],
                  'from': {'email': 'webmaster@localhost'},
-                 'personalizations': [{'subject': ''}],
+                 'personalizations': [{}],
                  'subject': ''}
             )
 
@@ -220,7 +218,7 @@ class SendGridBackendTests(TestCase):
                 {'content': [{'type': 'text/plain', 'value': ''}],
                  'from': {'email': 'webmaster@localhost'},
                  'headers': {'EXTRA_HEADER': 'VALUE'},
-                 'personalizations': [{'subject': ''}],
+                 'personalizations': [{}],
                  'subject': ''}
             )
 
@@ -236,6 +234,6 @@ class SendGridBackendTests(TestCase):
                 {'content': [{'type': 'text/plain', 'value': ''}],
                  'custom_args': {'custom_arg1': '12345-abcdef'},
                  'from': {'email': 'webmaster@localhost'},
-                 'personalizations': [{'subject': ''}],
+                 'personalizations': [{}],
                  'subject': ''}
             )

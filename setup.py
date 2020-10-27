@@ -15,8 +15,8 @@ setup(
     description='SendGrid Backend for Django',
     long_description=open('./README.rst').read(),
     install_requires=[
-        "python_http_client >= 2.1.*, <2.3",
-        "sendgrid >= 3.5, <4",
+        "python_http_client >= 3, <4",
+        "sendgrid >= 6, <7",
     ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",

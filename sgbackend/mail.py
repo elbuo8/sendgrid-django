@@ -29,6 +29,7 @@ from sendgrid.helpers.mail import (
     Mail,
     Personalization,
     Substitution,
+    Header,
 )
 
 
@@ -48,7 +49,7 @@ class SendGridBackend(BaseEmailBackend):
             raise ImproperlyConfigured('''
                 SENDGRID_API_KEY must be declared in settings.py''')
 
-        self.sg = sendgrid.SendGridAPIClient(apikey=self.api_key)
+        self.sg = sendgrid.SendGridAPIClient(api_key=self.api_key)
         self.version = 'sendgrid/{0};django'.format(__version__)
         self.sg.client.request_headers['User-agent'] = self.version
 
@@ -73,8 +74,8 @@ class SendGridBackend(BaseEmailBackend):
     def _build_sg_mail(self, email):
         mail = Mail()
 
-        mail.set_from(self._process_email_addr(email.from_email))
-        mail.set_subject(email.subject)
+        mail.from_email = self._process_email_addr(email.from_email)
+        mail.subject = email.subject
 
         personalization = Personalization()
         for e in email.to:
@@ -83,7 +84,7 @@ class SendGridBackend(BaseEmailBackend):
             personalization.add_cc(self._process_email_addr(e))
         for e in email.bcc:
             personalization.add_bcc(self._process_email_addr(e))
-        personalization.set_subject(email.subject)
+        personalization.subject = email.subject
         mail.add_content(Content("text/plain", email.body))
         if isinstance(email, EmailMultiAlternatives):
             for alt in email.alternatives:
@@ -103,7 +104,7 @@ class SendGridBackend(BaseEmailBackend):
                 mail.add_custom_arg(CustomArg(k, v))
 
         if hasattr(email, 'template_id'):
-            mail.set_template_id(email.template_id)
+            mail.template_id = email.template_id
             if hasattr(email, 'substitutions'):
                 for key, value in email.substitutions.items():
                     personalization.add_substitution(Substitution(key, value))
@@ -115,7 +116,7 @@ class SendGridBackend(BaseEmailBackend):
             if key.lower() == "reply-to":
                 reply_to_string = value
             else:
-                mail.add_header({key: value})
+                mail.add_header(Header(key=key, value=value))
         # Note that if you set a "Reply-To" header *and* the reply_to
         # attribute, the header's value will be used.
         if not mail.reply_to and hasattr(email, "reply_to") and email.reply_to:
@@ -127,25 +128,25 @@ class SendGridBackend(BaseEmailBackend):
         if reply_to_string:
             reply_to_name, reply_to_email = rfc822.parseaddr(reply_to_string)
             if reply_to_name and reply_to_email:
-                mail.set_reply_to(Email(reply_to_email, reply_to_name))
+                mail.reply_to = Email(reply_to_email, reply_to_name)
             elif reply_to_email:
-                mail.set_reply_to(Email(reply_to_email))
+                mail.reply_to = Email(reply_to_email)
 
         for attachment in email.attachments:
             if isinstance(attachment, MIMEBase):
                 attach = Attachment()
-                attach.set_filename(attachment.get_filename())
-                attach.set_content(base64.b64encode(attachment.get_payload()))
+                attach.file_name = attachment.get_filename()
+                attach.file_content = base64.b64encode(attachment.get_payload())
                 mail.add_attachment(attach)
             elif isinstance(attachment, tuple):
                 attach = Attachment()
-                attach.set_filename(attachment[0])
+                attach.file_name = attachment[0]
                 base64_attachment = base64.b64encode(attachment[1])
                 if sys.version_info >= (3,):
-                    attach.set_content(str(base64_attachment, 'utf-8'))
+                    attach.file_content = str(base64_attachment, 'utf-8')
                 else:
-                    attach.set_content(base64_attachment)
-                attach.set_type(attachment[2])
+                    attach.file_content = base64_attachment
+                attach.file_type = attachment[2]
                 mail.add_attachment(attach)
 
         mail.add_personalization(personalization)
@@ -158,5 +159,7 @@ class SendGridBackend(BaseEmailBackend):
         # sendgrid/helpers/mail/mail.py:164
         if not from_name:
             from_name = None
-
-        return Email(from_email, from_name)
+        email = Email()
+        email.email = from_email
+        email.name = from_name
+        return email
